@@ -42,5 +42,14 @@ def create_app():
             return json.dumps({'status': 'ok', 'codes': code_list, 'times': times, 'not_found': courses_not_found})
         else:
             return json.dumps({'status': 'error', 'message': 'no courses provided'})
+
+    @app.route('/list', methods=("GET",))
+    def get_list():
+        dbc = db.get_db()
+        courses = dbc.execute('SELECT course_code FROM timetable').fetchall()
+        code_list = []
+        for i in courses:
+            code_list.append(i['course_code'])
+        return json.dumps({'status': 'ok', 'list': code_list})
     app.teardown_appcontext(db.close_db)
     return app
